@@ -30,6 +30,7 @@ public class EventService {
                         () -> ResponseEntity.notFound().build()
                 );
     }
+
     public ResponseEntity<Event> addEvent(@Valid Event event) {
         event = this.eventRepository.save(event);
         return ResponseEntity.ok(event);

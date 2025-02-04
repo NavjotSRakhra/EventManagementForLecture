@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/event")
+@RequestMapping("/api/event")
 public class EventController {
     private final EventService eventService;
 
@@ -28,11 +28,13 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<Event> addEvent(@RequestBody Event event) {
+        event.setId(null);
         return this.eventService.addEvent(event);
     }
 
-    @PutMapping
-    public ResponseEntity<Event> updateEvent(@RequestBody Event event) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event event) {
+        event.setId(id);
         return this.eventService.updateEvent(event);
     }
 
