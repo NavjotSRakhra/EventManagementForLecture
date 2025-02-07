@@ -2,6 +2,7 @@ package io.github.navjotsrakhra.eventmanagementforlecture.service;
 
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.repository.EventRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,14 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
+    @Transactional
     public ResponseEntity<List<Event>> getAllEvents() {
         return ResponseEntity.ok(
                 eventRepository.findAll()
         );
     }
 
+    @Transactional
     public ResponseEntity<Event> getEventById(Long id) {
         Optional<Event> event = eventRepository.findById(id);
         return event.map(ResponseEntity::ok)
@@ -31,16 +34,19 @@ public class EventService {
                 );
     }
 
+    @Transactional
     public ResponseEntity<Event> addEvent(@Valid Event event) {
         event = this.eventRepository.save(event);
         return ResponseEntity.ok(event);
     }
 
+    @Transactional
     public ResponseEntity<Event> updateEvent(@Valid Event event) {
         event = this.eventRepository.save(event);
         return ResponseEntity.ok(event);
     }
 
+    @Transactional
     public ResponseEntity<Event> deleteEventById(Long id) {
         Optional<Event> event = eventRepository.findById(id);
         if (event.isPresent()) {
