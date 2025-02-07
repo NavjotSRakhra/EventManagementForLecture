@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventRepository extends ListCrudRepository<Event, Long> {
+    boolean existsById(long id);
 }

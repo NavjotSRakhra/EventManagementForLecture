@@ -42,8 +42,13 @@ public class EventService {
 
     @Transactional
     public ResponseEntity<Event> updateEvent(@Valid Event event) {
-        event = this.eventRepository.save(event);
-        return ResponseEntity.ok(event);
+        if (eventRepository.existsById(event.getId())) {
+            event = this.eventRepository.save(event);
+            return ResponseEntity.ok(event);
+        }
+        return ResponseEntity
+                .notFound()
+                .build();
     }
 
     @Transactional
