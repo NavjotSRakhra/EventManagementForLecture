@@ -131,4 +131,11 @@ public class EventTest {
                 .assertThat().body("title", equalTo(event.getTitle()))
                 .assertThat().body("description", equalTo(event.getDescription()));
     }
+    @Test
+    public void exceptionTest(){
+        given()
+                .when().get("api/error-test")
+                .then()
+                .assertThat().statusCode(500);
+    }
 }
