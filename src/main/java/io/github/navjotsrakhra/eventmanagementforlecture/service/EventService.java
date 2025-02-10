@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,8 @@ public class EventService {
     public ResponseEntity<List<Event>> getAllEvents() {
         return ResponseEntity.ok(
                 eventRepository.findAll()
+                        .stream().sorted(Comparator.comparing(Event::getId))
+                        .toList()
         );
     }
 
