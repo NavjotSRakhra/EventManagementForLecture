@@ -6,6 +6,9 @@ import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventRespo
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.repository.EventRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,12 +24,15 @@ import java.util.Optional;
 @Service
 public class EventService {
 
+    private static final Logger log = LoggerFactory.getLogger(EventService.class);
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
+    private final CacheManager cacheManager;
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, CacheManager cacheManager) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Transactional
@@ -60,7 +66,9 @@ public class EventService {
         Objects.requireNonNull(event, "Event must not be null");
 
         Event jpaEvent = eventMapper.toEventJpa(event);
-        EventResponseDto response = eventMapper.toEventResponseDto(this.eventRepository.save(jpaEvent));
+        jpaEvent = eventRepository.save(jpaEvent);
+        cacheManager.getCache("event").evict(jpaEvent.getId());
+        EventResponseDto response = eventMapper.toEventResponseDto(jpaEvent);
         return ResponseEntity
                 .ok(response);
     }

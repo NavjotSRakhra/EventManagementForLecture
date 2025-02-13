@@ -339,4 +339,41 @@ public class EventTest {
                 .assertThat().statusCode(200)
                 .assertThat().body("find { it.title == '" + newEvent.getTitle() + "' }.description", equalTo(newEvent.getDescription()));
     }
+
+    @Test
+    public void testAddEventCachePoisoning() {
+        for (int i = 1; i <= 100; i++) {
+            given()
+                    .when().get("api/event/" + (event.getId() + i))
+                    .then()
+                    .assertThat().statusCode(404);
+        }
+
+
+        Event newEvent = new Event();
+        newEvent.setTitle("New Event");
+        newEvent.setDescription("Description of the new event");
+
+        newEvent.setId(
+                Long.valueOf(
+                        given()
+                                .contentType("application/json")
+                                .body(newEvent)
+                                .when().post("api/event")
+                                .then()
+                                .assertThat().statusCode(200)
+                                .assertThat().body("title", equalTo(newEvent.getTitle()))
+                                .assertThat().body("description", equalTo(newEvent.getDescription()))
+                                .extract().path("id")
+                                + ""
+                )
+        );
+
+        given()
+                .when().get("api/event/" + newEvent.getId())
+                .then()
+                .assertThat().statusCode(200)
+                .assertThat().body("title", equalTo(newEvent.getTitle()))
+                .assertThat().body("description", equalTo(newEvent.getDescription()));
+    }
 }
