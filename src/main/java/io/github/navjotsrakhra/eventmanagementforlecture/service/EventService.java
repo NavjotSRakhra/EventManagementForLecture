@@ -6,8 +6,6 @@ import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventRespo
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.repository.EventRepository;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
