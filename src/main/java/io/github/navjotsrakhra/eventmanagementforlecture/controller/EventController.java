@@ -2,7 +2,6 @@ package io.github.navjotsrakhra.eventmanagementforlecture.controller;
 
 import io.github.navjotsrakhra.eventmanagementforlecture.dto.request.EventRequestDto;
 import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventResponseDto;
-import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
