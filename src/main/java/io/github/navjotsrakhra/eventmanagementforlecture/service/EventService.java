@@ -24,7 +24,6 @@ import java.util.Optional;
 @Service
 public class EventService {
 
-    private static final Logger log = LoggerFactory.getLogger(EventService.class);
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final CacheManager cacheManager;
