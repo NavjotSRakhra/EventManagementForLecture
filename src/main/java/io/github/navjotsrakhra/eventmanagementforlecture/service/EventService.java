@@ -6,11 +6,16 @@ import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventRespo
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.repository.EventRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,6 +30,7 @@ public class EventService {
     }
 
     @Transactional
+    @Cacheable("allEvents")
     public ResponseEntity<List<EventResponseDto>> getAllEvents() {
         return ResponseEntity.ok(
                 eventRepository.findAll()
@@ -35,7 +41,10 @@ public class EventService {
     }
 
     @Transactional
+    @Cacheable(value = "event", condition = "#id != null")
     public ResponseEntity<EventResponseDto> getEventById(Long id) {
+        Objects.requireNonNull(id, "ID must not be null");
+
         Optional<Event> event = eventRepository.findById(id);
         return event
                 .map(eventMapper::toEventResponseDto)
@@ -46,7 +55,10 @@ public class EventService {
     }
 
     @Transactional
+    @CacheEvict(value = "allEvents", allEntries = true)
     public ResponseEntity<EventResponseDto> addEvent(EventRequestDto event) {
+        Objects.requireNonNull(event, "Event must not be null");
+
         Event jpaEvent = eventMapper.toEventJpa(event);
         EventResponseDto response = eventMapper.toEventResponseDto(this.eventRepository.save(jpaEvent));
         return ResponseEntity
@@ -54,7 +66,12 @@ public class EventService {
     }
 
     @Transactional
+    @CachePut(value = "event", key = "#id", condition = "#id != null")
+    @CacheEvict(value = "allEvents", allEntries = true)
     public ResponseEntity<EventResponseDto> updateEvent(Long id, EventRequestDto event) {
+        Objects.requireNonNull(id, "ID must not be null");
+        Objects.requireNonNull(event, "Event must not be null");
+
         if (eventRepository.existsById(id)) {
             Event eventToUpdate = eventMapper.toEventJpa(event);
             eventToUpdate.setId(id);
@@ -73,7 +90,15 @@ public class EventService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "event", key = "#id", condition = "#id != null"),
+                    @CacheEvict(value = "allEvents", allEntries = true)
+            }
+    )
     public ResponseEntity<EventResponseDto> deleteEventById(Long id) {
+        Objects.requireNonNull(id, " ID must not be null");
+
         Optional<Event> event = eventRepository.findById(id);
 
         event.ifPresent(

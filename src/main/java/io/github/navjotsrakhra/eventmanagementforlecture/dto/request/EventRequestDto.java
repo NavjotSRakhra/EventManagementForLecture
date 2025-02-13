@@ -1,5 +1,7 @@
 package io.github.navjotsrakhra.eventmanagementforlecture.dto.request;
 
-public record EventRequestDto(String title, String description) {
+import jakarta.validation.constraints.NotNull;
+
+public record EventRequestDto(@NotNull String title, @NotNull String description) {
 
 }
