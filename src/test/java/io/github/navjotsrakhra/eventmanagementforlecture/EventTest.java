@@ -188,22 +188,22 @@ public class EventTest {
     public void testCacheHit() {
         long startTime = System.nanoTime();
         given()
-                .when().get("api/event/" + event.getId())
+                .when().get("api/event")
                 .then()
                 .assertThat().statusCode(200)
-                .assertThat().body("title", equalTo(event.getTitle()))
-                .assertThat().body("description", equalTo(event.getDescription()));
+                .assertThat().body("find { it.id == " + event.getId() + " }.title", equalTo(event.getTitle()))
+                .assertThat().body("find { it.id == " + event.getId() + " }.description", equalTo(event.getDescription()));
         long endTime = System.nanoTime();
 
         long elapsedTimeNonCache = endTime - startTime;
 
         startTime = System.nanoTime();
         given()
-                .when().get("api/event/" + event.getId())
+                .when().get("api/event")
                 .then()
                 .assertThat().statusCode(200)
-                .assertThat().body("title", equalTo(event.getTitle()))
-                .assertThat().body("description", equalTo(event.getDescription()));
+                .assertThat().body("find { it.id == " + event.getId() + " }.title", equalTo(event.getTitle()))
+                .assertThat().body("find { it.id == " + event.getId() + " }.description", equalTo(event.getDescription()));
         endTime = System.nanoTime();
 
         long elapsedTimeCache = endTime - startTime;
