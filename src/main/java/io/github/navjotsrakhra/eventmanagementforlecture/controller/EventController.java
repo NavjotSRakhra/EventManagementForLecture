@@ -1,5 +1,7 @@
 package io.github.navjotsrakhra.eventmanagementforlecture.controller;
 
+import io.github.navjotsrakhra.eventmanagementforlecture.dto.request.EventRequestDto;
+import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventResponseDto;
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.service.EventService;
 import org.springframework.http.ResponseEntity;
@@ -17,29 +19,27 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents() {
+    public ResponseEntity<List<EventResponseDto>> getAllEvents() {
         return this.eventService.getAllEvents();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventResponseDto> getEventById(@PathVariable Long id) {
         return this.eventService.getEventById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Event> addEvent(@RequestBody Event event) {
-        event.setId(null);
+    public ResponseEntity<EventResponseDto> addEvent(@RequestBody EventRequestDto event) {
         return this.eventService.addEvent(event);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event event) {
-        event.setId(id);
-        return this.eventService.updateEvent(event);
+    public ResponseEntity<EventResponseDto> updateEvent(@PathVariable Long id, @RequestBody EventRequestDto event) {
+        return this.eventService.updateEvent(id, event);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Event> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<EventResponseDto> deleteEvent(@PathVariable Long id) {
         return this.eventService.deleteEventById(id);
     }
 }

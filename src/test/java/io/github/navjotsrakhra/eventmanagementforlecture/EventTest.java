@@ -1,5 +1,8 @@
 package io.github.navjotsrakhra.eventmanagementforlecture;
 
+import io.github.navjotsrakhra.eventmanagementforlecture.dto.EventMapper;
+import io.github.navjotsrakhra.eventmanagementforlecture.dto.request.EventRequestDto;
+import io.github.navjotsrakhra.eventmanagementforlecture.dto.response.EventResponseDto;
 import io.github.navjotsrakhra.eventmanagementforlecture.jpa.Event;
 import io.github.navjotsrakhra.eventmanagementforlecture.repository.EventRepository;
 import io.restassured.RestAssured;
@@ -13,6 +16,7 @@ import java.util.Random;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EventTest {
@@ -25,8 +29,13 @@ public class EventTest {
     private Random random = new Random();
 
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final EventMapper eventMapper;
+
+    public EventTest(@Autowired EventRepository eventRepository, @Autowired EventMapper eventMapper) {
+        this.eventRepository = eventRepository;
+        this.eventMapper = eventMapper;
+    }
 
     @BeforeEach
     public void setup() {
@@ -137,5 +146,32 @@ public class EventTest {
                 .when().get("api/error-test")
                 .then()
                 .assertThat().statusCode(500);
+    }
+
+    @Test
+    public void testMapEvent() {
+        final Event event = new Event();
+        event.setTitle("Title");
+        event.setDescription("Description");
+
+        EventRequestDto eventRequestDto = new EventRequestDto(event.getTitle(), event.getDescription());
+
+        Event mappedEvent = eventMapper.toEventJpa(eventRequestDto);
+
+        assertEquals(event, mappedEvent);
+    }
+
+    @Test
+    public void testMapEventResponse() {
+        final Event event = new Event();
+        event.setId(23L);
+        event.setTitle("Title");
+        event.setDescription("Description");
+
+        EventResponseDto eventResponseDto = eventMapper.toEventResponseDto(event);
+
+        assertEquals(event.getId(), eventResponseDto.id());
+        assertEquals(event.getTitle(), eventResponseDto.title());
+        assertEquals(event.getDescription(), eventResponseDto.description());
     }
 }
