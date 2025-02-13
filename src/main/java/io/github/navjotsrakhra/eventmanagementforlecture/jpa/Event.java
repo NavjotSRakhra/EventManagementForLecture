@@ -17,12 +17,6 @@ public class Event {
     public Event() {
     }
 
-    public Event(Long id, String title, String description) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-    }
-
     public Long getId() {
         return id;
     }
