@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.cache.CacheManager;
+import org.springframework.http.HttpStatus;
 
 import java.util.Random;
 
@@ -154,7 +155,7 @@ public class EventTest {
         given()
                 .when().get("api/error-test")
                 .then()
-                .assertThat().statusCode(500);
+                .assertThat().statusCode(200);
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
 
@@ -21,8 +22,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleException(Exception e) {
         UUID errorUuid = UUID.randomUUID();
         log.error("Error encountered: {}, error UUID: {}", e.getMessage(), errorUuid, e);
+        String errorUrl = UriComponentsBuilder
+                .fromPath("/errors")
+                .queryParam("errorUuid", errorUuid.toString()).encode()
+                .queryParam("errorMessage", e.getMessage()).encode()
+                .toUriString();
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error UUID: " + errorUuid + (e.getMessage() != null ? ", error message: " + e.getMessage() : ""));
+                .status(HttpStatus.SEE_OTHER)
+                .header("Location", errorUrl)
+                .build();
     }
 }
